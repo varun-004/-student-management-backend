@@ -29,6 +29,7 @@ public class StudentController {
     @GetMapping
     public List<StudentResponseDTO> getAll() {
         return service.getAllStudents();
+
     }
 
     // GET BY ID
@@ -64,6 +65,16 @@ public class StudentController {
 
         return service.searchStudents(name, pageable);
     }
+
+
+    @RequestMapping("/student")
+        @GetMapping("/dashboard")
+        public String studentDashboard() {
+
+            return "WELCOME STUDENT";
+        }
+
+
 
 
 }
