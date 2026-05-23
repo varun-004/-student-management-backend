@@ -1,4 +1,4 @@
-package com.example.student_management_system.DTO;
+package com.example.student_management_system.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

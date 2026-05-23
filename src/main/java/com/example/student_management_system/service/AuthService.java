@@ -1,7 +1,7 @@
 package com.example.student_management_system.service;
 
-import com.example.student_management_system.DTO.LoginRequest;
-import com.example.student_management_system.DTO.RegisterRequest;
+import com.example.student_management_system.dto.LoginRequest;
+import com.example.student_management_system.dto.RegisterRequest;
 
 import com.example.student_management_system.entity.User;
 

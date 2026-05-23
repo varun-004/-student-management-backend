@@ -1,4 +1,4 @@
-package com.example.student_management_system.DTO;
+package com.example.student_management_system.dto;
 
 import com.example.student_management_system.entity.Role;
 

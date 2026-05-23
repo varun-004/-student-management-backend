@@ -1,9 +1,9 @@
-package com.example.student_management_system.service;
+package com.example.student_management_system.student.service;
 
-import com.example.student_management_system.DTO.StudentDTO;
+import com.example.student_management_system.student.dto.Studentdto;
 import com.example.student_management_system.ResponseDTO.StudentResponseDTO;
-import com.example.student_management_system.model.Student;
-import com.example.student_management_system.repository.StudentRepository;
+import com.example.student_management_system.student.entity.Student;
+import com.example.student_management_system.student.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +27,7 @@ public class StudentService {
                 .toList();
     }
 
-    public StudentResponseDTO saveStudent(StudentDTO dto) {
+    public StudentResponseDTO saveStudent(Studentdto dto) {
 
         Student student = new Student();
         student.setName(dto.getName());
@@ -51,7 +51,7 @@ public class StudentService {
         return convertToDTO(student);
     }
 
-    public StudentResponseDTO updateStudent(Long id, StudentDTO dto) {
+    public StudentResponseDTO updateStudent(Long id, Studentdto dto) {
 
         Student existing = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Student not found"));

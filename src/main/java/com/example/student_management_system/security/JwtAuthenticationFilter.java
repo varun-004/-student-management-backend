@@ -37,8 +37,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-
         System.out.println("JWT FILTER EXECUTED");
+
+        String path = request.getServletPath();
+
+        System.out.println("PATH: " + path);
+
+        if (path.startsWith("/auth")) {
+
+            System.out.println("AUTH API - SKIPPING JWT FILTER");
+
+            filterChain.doFilter(request, response);
+
+            return;
+        }
 
         final String authHeader =
                 request.getHeader("Authorization");
@@ -56,6 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             return;
         }
+
 
         // EXTRACT TOKEN
         jwt = authHeader.substring(7);
