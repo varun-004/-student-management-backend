@@ -76,22 +76,48 @@ public class SecurityConfig {
 //                )
                 .authorizeHttpRequests(auth -> auth
 
+                        // AUTH APIs
                         .requestMatchers("/auth/**")
                         .permitAll()
 
+                        // SWAGGER
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()
 
+                        // ADMIN APIs
                         .requestMatchers("/admin/**")
                         .hasRole("ADMIN")
 
+                        // STUDENT PANEL APIs
                         .requestMatchers("/student/**")
                         .hasAnyRole("STUDENT", "ADMIN")
 
+                        // =========================
+                        // STUDENT CRUD APIs
+                        // =========================
+
+                        .requestMatchers(HttpMethod.POST,
+                                "/students/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT,
+                                "/students/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/students/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET,
+                                "/students/**")
+                        .hasAnyRole("ADMIN", "STUDENT")
+
+                        // =========================
                         // COURSE APIs
+                        // =========================
 
                         .requestMatchers(HttpMethod.POST,
                                 "/api/courses/**")
@@ -109,9 +135,11 @@ public class SecurityConfig {
                                 "/api/courses/**")
                         .hasAnyRole("ADMIN", "STUDENT")
 
+                        // DEBUG
                         .requestMatchers("/debug")
                         .authenticated()
 
+                        // ALL OTHER APIs
                         .anyRequest()
                         .authenticated()
                 )
