@@ -1,5 +1,4 @@
 package com.example.student_management_system.course.entity;
-
 import com.example.student_management_system.student.entity.Student;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,5 +31,6 @@ public class Course {
     private Integer credits;
 
     @ManyToMany(mappedBy = "courses")
+    @Builder.Default
     private Set<Student> students = new HashSet<>();
 }

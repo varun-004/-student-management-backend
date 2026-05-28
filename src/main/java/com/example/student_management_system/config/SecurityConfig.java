@@ -1,15 +1,13 @@
-package com.example.student_management_system.config;
-
-import com.example.student_management_system.security.CustomUserDetailsService;
-import com.example.student_management_system.security.JwtAuthenticationFilter;
+        package com.example.student_management_system.config;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.http.HttpMethod;
 
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -21,13 +19,22 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.web.SecurityFilterChain;
 
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.http.HttpMethod;
+
+/*
+    IMPORTANT:
+
+    Replace these imports with the ACTUAL package paths
+    from your project if they are different.
+*/
+
+import com.example.student_management_system.security.JwtAuthenticationFilter;
+
+import com.example.student_management_system.security.CustomUserDetailsService;
 
 @Configuration
 @RequiredArgsConstructor
@@ -36,9 +43,6 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
 
     private final CustomUserDetailsService userDetailsService;
-
-
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -51,29 +55,6 @@ public class SecurityConfig {
 
                 .csrf(csrf -> csrf.disable())
 
-//                .authorizeHttpRequests(auth -> auth
-//
-//                        .requestMatchers("/auth/**")
-//                        .permitAll()
-//
-//                        .requestMatchers(
-//                                "/v3/api-docs/**",
-//                                "/swagger-ui/**",
-//                                "/swagger-ui.html"
-//                        ).permitAll()
-//
-//                        .requestMatchers("/admin/**")
-//                        .hasRole("ADMIN")
-//
-//                        .requestMatchers("/student/**")
-//                        .hasAnyRole("STUDENT", "ADMIN")
-//
-//                        .requestMatchers("/debug")
-//                        .authenticated()
-//
-//                        .anyRequest()
-//                        .authenticated()
-//                )
                 .authorizeHttpRequests(auth -> auth
 
                         // AUTH APIs
@@ -95,44 +76,64 @@ public class SecurityConfig {
                         .requestMatchers("/student/**")
                         .hasAnyRole("STUDENT", "ADMIN")
 
+                        // ANALYTICS APIs
+                        .requestMatchers("/api/analytics/**")
+                        .hasRole("ADMIN")
+
                         // =========================
                         // STUDENT CRUD APIs
                         // =========================
 
-                        .requestMatchers(HttpMethod.POST,
-                                "/students/**")
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/students/**"
+                        )
                         .hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.PUT,
-                                "/students/**")
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/students/**"
+                        )
                         .hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.DELETE,
-                                "/students/**")
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/students/**"
+                        )
                         .hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.GET,
-                                "/students/**")
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/students/**"
+                        )
                         .hasAnyRole("ADMIN", "STUDENT")
 
                         // =========================
                         // COURSE APIs
                         // =========================
 
-                        .requestMatchers(HttpMethod.POST,
-                                "/api/courses/**")
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/courses/**"
+                        )
                         .hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.PUT,
-                                "/api/courses/**")
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/courses/**"
+                        )
                         .hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.DELETE,
-                                "/api/courses/**")
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/api/courses/**"
+                        )
                         .hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/courses/**")
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/courses/**"
+                        )
                         .hasAnyRole("ADMIN", "STUDENT")
 
                         // DEBUG
@@ -150,14 +151,14 @@ public class SecurityConfig {
                         )
                 )
 
-                .authenticationProvider(authenticationProvider())
+                .authenticationProvider(
+                        authenticationProvider()
+                )
 
                 .addFilterBefore(
                         jwtAuthFilter,
                         UsernamePasswordAuthenticationFilter.class
                 );
-
-
 
         return http.build();
     }
@@ -168,9 +169,13 @@ public class SecurityConfig {
         DaoAuthenticationProvider authProvider =
                 new DaoAuthenticationProvider();
 
-        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setUserDetailsService(
+                userDetailsService
+        );
 
-        authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setPasswordEncoder(
+                passwordEncoder()
+        );
 
         return authProvider;
     }
@@ -188,6 +193,4 @@ public class SecurityConfig {
 
         return new BCryptPasswordEncoder();
     }
-
-
 }
