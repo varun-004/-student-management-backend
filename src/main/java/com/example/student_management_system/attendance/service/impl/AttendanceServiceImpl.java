@@ -1,12 +1,11 @@
-package com.example.student_management_system.attendance.service.impl;
-
+        package com.example.student_management_system.attendance.service.impl;
 
 import com.example.student_management_system.attendance.dto.AttendanceResponse;
 import com.example.student_management_system.attendance.dto.MarkAttendanceRequest;
 import com.example.student_management_system.attendance.entity.Attendance;
 import com.example.student_management_system.attendance.repository.AttendanceRepository;
-import com.example.student_management_system.attendance.service.AttendanceService;
 
+import com.example.student_management_system.attendance.service.AttendanceService;
 import com.example.student_management_system.course.entity.Course;
 import com.example.student_management_system.course.repository.CourseRepository;
 
@@ -16,127 +15,213 @@ import com.example.student_management_system.student.repository.StudentRepositor
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
-import com.example.student_management_system.attendance.entity.AttendanceStatus;
 
+import java.time.LocalDate;
 import java.util.List;
-import com.example.student_management_system.attendance.entity.AttendanceStatus;
 
 @Service
 @RequiredArgsConstructor
-public class AttendanceServiceImpl implements AttendanceService {
+public class AttendanceServiceImpl
+        implements AttendanceService {
 
-    private final AttendanceRepository attendanceRepository;
+    private final AttendanceRepository
+            attendanceRepository;
 
-    private final StudentRepository studentRepository;
+    private final StudentRepository
+            studentRepository;
 
-    private final CourseRepository courseRepository;
+    private final CourseRepository
+            courseRepository;
+
+    /*
+    |--------------------------------------------------------------------------
+    | MARK ATTENDANCE
+    |--------------------------------------------------------------------------
+    */
 
     @Override
     public AttendanceResponse markAttendance(
             MarkAttendanceRequest request
     ) {
 
-        Student student = studentRepository.findById(
-                request.getStudentId()
-        ).orElseThrow(() ->
-                new RuntimeException("Student not found"));
-
-        Course course = courseRepository.findById(
-                request.getCourseId()
-        ).orElseThrow(() ->
-                new RuntimeException("Course not found"));
-
-        // VALIDATE ENROLLMENT
-
-        if (!student.getCourses().contains(course)) {
-
-            throw new RuntimeException(
-                    "Student is not enrolled in this course"
-            );
-        }
-
-        // PREVENT DUPLICATE ATTENDANCE
-
-        boolean alreadyExists =
-                attendanceRepository
-                        .existsByStudentAndCourseAndDate(
-                                student,
-                                course,
-                                request.getDate()
+        Student student =
+                studentRepository.findById(
+                                request.getStudentId()
+                        )
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Student not found"
+                                )
                         );
 
-        if (alreadyExists) {
+        Course course =
+                courseRepository.findById(
+                                request.getCourseId()
+                        )
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Course not found"
+                                )
+                        );
 
-            throw new RuntimeException(
-                    "Attendance already marked"
-            );
-        }
+        Attendance attendance =
+                Attendance.builder()
 
-        Attendance attendance = Attendance.builder()
-                .date(request.getDate())
-                .status(request.getStatus())
-                .student(student)
-                .course(course)
-                .build();
+                        .student(student)
 
-        attendanceRepository.save(attendance);
+                        .course(course)
 
-        return mapToResponse(attendance);
+                        .attendanceDate(
+                                LocalDate.now()
+                        )
+
+                        .present(
+                                request.getPresent()
+                        )
+
+                        .build();
+
+        attendanceRepository.save(
+                attendance
+        );
+
+        return mapToResponse(
+                attendance
+        );
     }
 
-    @Override
-    public List<AttendanceResponse> getStudentAttendance(
-            Long studentId
-    ) {
-
-        List<Attendance> attendances =
-                attendanceRepository.findByStudentId(studentId);
-
-        return attendances.stream()
-                .map(this::mapToResponse)
-                .toList();
-    }
+    /*
+    |--------------------------------------------------------------------------
+    | GET COURSE ATTENDANCE
+    |--------------------------------------------------------------------------
+    */
 
     @Override
-    public double getAttendancePercentage(
-            Long studentId,
+    public List<AttendanceResponse>
+    getAttendanceByCourse(
             Long courseId
     ) {
 
-        List<Attendance> attendances =
-                attendanceRepository.findByStudentId(studentId);
+        return attendanceRepository.findAll()
 
-        long totalClasses = attendances.stream()
-                .filter(a ->
-                        a.getCourse().getId().equals(courseId))
-                .count();
+                .stream()
 
-        long presentCount = attendances.stream()
-                .filter(a ->
-                        a.getCourse().getId().equals(courseId))
-                .filter(a ->
-                        a.getStatus() == AttendanceStatus.PRESENT)
-                .count();
+                .filter(attendance ->
 
-        if (totalClasses == 0) {
-            return 0;
-        }
+                        attendance.getCourse()
+                                .getId()
+                                .equals(courseId)
+                )
 
-        return ((double) presentCount / totalClasses) * 100;
+                .map(this::mapToResponse)
+
+                .toList();
     }
 
-    private AttendanceResponse mapToResponse(
+    /*
+    |--------------------------------------------------------------------------
+    | GET STUDENT ATTENDANCE
+    |--------------------------------------------------------------------------
+    */
+
+    @Override
+    public List<AttendanceResponse>
+    getAttendanceByStudent(
+            Long studentId
+    ) {
+
+        return attendanceRepository.findAll()
+
+                .stream()
+
+                .filter(attendance ->
+
+                        attendance.getStudent()
+                                .getId()
+                                .equals(studentId)
+                )
+
+                .map(this::mapToResponse)
+
+                .toList();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | MAP RESPONSE
+    |--------------------------------------------------------------------------
+    */
+
+    private AttendanceResponse
+    mapToResponse(
             Attendance attendance
     ) {
 
         return AttendanceResponse.builder()
-                .id(attendance.getId())
-                .date(attendance.getDate())
-                .status(attendance.getStatus())
-                .studentId(attendance.getStudent().getId())
-                .studentName(attendance.getStudent().getName())
-                .courseId(attendance.getCourse().getId())
-                .courseName(attendance.getCourse().getCourseName())
+
+                .id(
+                        attendance.getId()
+                )
+
+                .studentId(
+                        attendance.getStudent()
+                                .getId()
+                )
+
+                .studentName(
+                        attendance.getStudent()
+                                .getName()
+                )
+
+                .courseId(
+                        attendance.getCourse()
+                                .getId()
+                )
+
+                .courseName(
+                        attendance.getCourse()
+                                .getCourseName()
+                )
+
+                .attendanceDate(
+                        attendance.getAttendanceDate()
+                )
+
+                .present(
+                        attendance.getPresent()
+                )
+
                 .build();
     }
+
+    @Override
+    public double getAttendancePercentage(
+            Long studentId
+    ) {
+
+        Long total =
+                attendanceRepository
+                        .getTotalAttendance(
+                                studentId
+                        );
+
+        Long present =
+                attendanceRepository
+                        .getPresentAttendance(
+                                studentId
+                        );
+
+        if (
+                total == null ||
+                        total == 0
+        ) {
+            return 0;
+        }
+
+        return (
+                present * 100.0
+        ) / total;
+    }
+
+
 }

@@ -1,4 +1,4 @@
-package com.example.student_management_system.attendance.service;
+        package com.example.student_management_system.attendance.service;
 
 import com.example.student_management_system.attendance.dto.AttendanceResponse;
 import com.example.student_management_system.attendance.dto.MarkAttendanceRequest;
@@ -11,12 +11,18 @@ public interface AttendanceService {
             MarkAttendanceRequest request
     );
 
-    List<AttendanceResponse> getStudentAttendance(
+    List<AttendanceResponse>
+    getAttendanceByCourse(
+            Long courseId
+    );
+
+    List<AttendanceResponse>
+    getAttendanceByStudent(
             Long studentId
     );
 
     double getAttendancePercentage(
-            Long studentId,
-            Long courseId
+            Long studentId
     );
 }
+

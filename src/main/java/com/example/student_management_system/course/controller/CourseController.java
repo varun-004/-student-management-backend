@@ -27,6 +27,8 @@ public class CourseController {
         return courseService.createCourse(request);
     }
 
+
+
     @PutMapping("/{courseId}")
     public CourseResponse updateCourse(
             @PathVariable Long courseId,
@@ -54,6 +56,15 @@ public class CourseController {
                 search
         );
     }
+
+    @GetMapping("/{id}")
+    public CourseResponse getCourseById(
+            @PathVariable Long id
+    ) {
+
+        return courseService.getCourseById(id);
+    }
+
 
     @PostMapping("/{courseId}/students/{studentId}")
     public CourseResponse assignStudentToCourse(

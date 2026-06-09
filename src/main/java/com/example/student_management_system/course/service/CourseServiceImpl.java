@@ -1,50 +1,74 @@
 package com.example.student_management_system.course.service;
-
 import com.example.student_management_system.course.dto.CreateCourseRequest;
 import com.example.student_management_system.course.dto.CourseResponse;
 import com.example.student_management_system.course.entity.Course;
 import com.example.student_management_system.course.repository.CourseRepository;
-import com.example.student_management_system.course.service.CourseService;
+
+import com.example.student_management_system.student.dto.StudentResponse;
+import com.example.student_management_system.student.dto.Studentdto;
 import com.example.student_management_system.student.entity.Student;
 import com.example.student_management_system.student.repository.StudentRepository;
-import com.example.student_management_system.student.repository.StudentRepository;
-import com.example.student_management_system.student.entity.Student;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import java.util.stream.Collectors;
+
+import com.example.student_management_system.enrollment.entity.Enrollment;
+import com.example.student_management_system.enrollment.repository.EnrollmentRepository;
 
 @Service
 @RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
+
     private final StudentRepository studentRepository;
 
+    private final EnrollmentRepository enrollmentRepository;
+
+    /*
+    |--------------------------------------------------------------------------
+    | CREATE COURSE
+    |--------------------------------------------------------------------------
+    */
 
     @Override
-    public CourseResponse createCourse(CreateCourseRequest request) {
-
-        if (courseRepository.existsByCourseCode(
-                request.getCourseCode())) {
-
-            throw new RuntimeException(
-                    "Course code already exists"
-            );
-        }
+    public CourseResponse createCourse(
+            CreateCourseRequest request
+    ) {
 
         Course course = Course.builder()
-                .courseCode(request.getCourseCode())
-                .courseName(request.getCourseName())
-                .description(request.getDescription())
-                .credits(request.getCredits())
+
+                .courseCode(
+                        request.getCourseCode()
+                )
+
+                .courseName(
+                        request.getCourseName()
+                )
+
+                .description(
+                        request.getDescription()
+                )
+
+                .credits(
+                        request.getCredits()
+                )
+
                 .build();
 
         courseRepository.save(course);
 
         return mapToResponse(course);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE COURSE
+    |--------------------------------------------------------------------------
+    */
 
     @Override
     public CourseResponse updateCourse(
@@ -53,27 +77,61 @@ public class CourseServiceImpl implements CourseService {
     ) {
 
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() ->
-                        new RuntimeException("Course not found"));
 
-        course.setCourseName(request.getCourseName());
-        course.setDescription(request.getDescription());
-        course.setCredits(request.getCredits());
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Course not found"
+                        )
+                );
+
+        course.setCourseName(
+                request.getCourseName()
+        );
+
+        course.setCourseCode(
+                request.getCourseCode()
+        );
+
+        course.setDescription(
+                request.getDescription()
+        );
+
+        course.setCredits(
+                request.getCredits()
+        );
 
         courseRepository.save(course);
 
         return mapToResponse(course);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | DELETE COURSE
+    |--------------------------------------------------------------------------
+    */
+
     @Override
-    public void deleteCourse(Long courseId) {
+    public void deleteCourse(
+            Long courseId
+    ) {
 
         Course course = courseRepository.findById(courseId)
+
                 .orElseThrow(() ->
-                        new RuntimeException("Course not found"));
+                        new RuntimeException(
+                                "Course not found"
+                        )
+                );
 
         courseRepository.delete(course);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | GET ALL COURSES
+    |--------------------------------------------------------------------------
+    */
 
     @Override
     public Page<CourseResponse> getAllCourses(
@@ -90,7 +148,10 @@ public class CourseServiceImpl implements CourseService {
 
         Page<Course> courses;
 
-        if (search != null && !search.isBlank()) {
+        if (
+                search != null &&
+                        !search.isBlank()
+        ) {
 
             courses = courseRepository
                     .findByCourseNameContainingIgnoreCase(
@@ -100,22 +161,44 @@ public class CourseServiceImpl implements CourseService {
 
         } else {
 
-            courses = courseRepository.findAll(pageable);
+            courses = courseRepository
+                    .findAll(pageable);
         }
 
-        return courses.map(this::mapToResponse);
+        return courses.map(
+                this::mapToResponse
+        );
     }
 
-    private CourseResponse mapToResponse(Course course) {
+    /*
+    |--------------------------------------------------------------------------
+    | GET COURSE BY ID
+    |--------------------------------------------------------------------------
+    */
 
-        return CourseResponse.builder()
-                .id(course.getId())
-                .courseCode(course.getCourseCode())
-                .courseName(course.getCourseName())
-                .description(course.getDescription())
-                .credits(course.getCredits())
-                .build();
+    @Override
+    public CourseResponse getCourseById(
+            Long id
+    ) {
+
+        Course course = courseRepository
+
+                .findById(id)
+
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Course not found"
+                        )
+                );
+
+        return mapToResponse(course);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ASSIGN STUDENT
+    |--------------------------------------------------------------------------
+    */
 
     @Override
     public CourseResponse assignStudentToCourse(
@@ -123,26 +206,66 @@ public class CourseServiceImpl implements CourseService {
             Long courseId
     ) {
 
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() ->
-                        new RuntimeException("Student not found"));
+        Student student = studentRepository
+                .findById(studentId)
 
-        Course course = courseRepository.findById(courseId)
                 .orElseThrow(() ->
-                        new RuntimeException("Course not found"));
+                        new RuntimeException(
+                                "Student not found"
+                        )
+                );
 
-        if (student.getCourses().contains(course)) {
+        Course course = courseRepository
+                .findById(courseId)
+
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Course not found"
+                        )
+                );
+
+        if (
+                student.getCourses()
+                        .contains(course)
+        ) {
+
             throw new RuntimeException(
-                    "Student already enrolled in course"
+                    "Student already enrolled"
             );
         }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADD TO MANY-TO-MANY RELATIONSHIP
+    |--------------------------------------------------------------------------
+    */
 
         student.getCourses().add(course);
 
         studentRepository.save(student);
 
+    /*
+    |--------------------------------------------------------------------------
+    | SAVE ENROLLMENT RECORD
+    |--------------------------------------------------------------------------
+    */
+
+        Enrollment enrollment =
+                Enrollment.builder()
+                        .student(student)
+                        .course(course)
+                        .build();
+
+        enrollmentRepository.save(enrollment);
+
         return mapToResponse(course);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | REMOVE STUDENT
+    |--------------------------------------------------------------------------
+    */
 
     @Override
     public CourseResponse removeStudentFromCourse(
@@ -150,13 +273,23 @@ public class CourseServiceImpl implements CourseService {
             Long courseId
     ) {
 
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() ->
-                        new RuntimeException("Student not found"));
+        Student student = studentRepository
+                .findById(studentId)
 
-        Course course = courseRepository.findById(courseId)
                 .orElseThrow(() ->
-                        new RuntimeException("Course not found"));
+                        new RuntimeException(
+                                "Student not found"
+                        )
+                );
+
+        Course course = courseRepository
+                .findById(courseId)
+
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Course not found"
+                        )
+                );
 
         student.getCourses().remove(course);
 
@@ -165,6 +298,58 @@ public class CourseServiceImpl implements CourseService {
         return mapToResponse(course);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | MAP RESPONSE
+    |--------------------------------------------------------------------------
+    */
+
+    private CourseResponse mapToResponse(
+            Course course
+    ) {
+
+        return CourseResponse.builder()
+
+                .id(course.getId())
+
+                .courseCode(
+                        course.getCourseCode()
+                )
+
+                .courseName(
+                        course.getCourseName()
+                )
+
+                .description(
+                        course.getDescription()
+                )
+
+                .credits(
+                        course.getCredits()
+                )
+
+                .students(
+                        course.getStudents()
+
+                                .stream()
+
+                                .map(student -> StudentResponse.builder()
+
+                                        .id(student.getId())
+
+                                        .name(student.getName())
+
+                                        .email(student.getEmail())
+
+                                        .build()
+
+                                )
+
+                                .collect(Collectors.toList())
+                )
 
 
+                .build();
+    }
 }
+

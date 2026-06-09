@@ -10,4 +10,4 @@ public class CourseStatsDTO {
     private String courseName;
 
     private long totalStudents;
-}
+}   

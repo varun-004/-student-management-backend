@@ -38,8 +38,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         long totalStudents =
                 studentRepository.getTotalStudents();
 
-        Double averageAttendance =
-                attendanceRepository.getAverageAttendance();
+        Double averageAttendance = 0.0;
 
         Double averageMarks =
                 marksRepository.getAverageMarks();
@@ -77,11 +76,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         return students.stream()
                 .map(student -> {
 
-                    Double attendance =
-                            attendanceRepository
-                                    .getAverageAttendanceByStudent(
-                                            student.getId()
-                                    );
+                    Double attendance = 0.0;
 
                     Double marks =
                             marksRepository

@@ -1,5 +1,6 @@
 package com.example.student_management_system.service;
 
+import com.example.student_management_system.dto.AuthResponse;
 import com.example.student_management_system.dto.LoginRequest;
 import com.example.student_management_system.dto.RegisterRequest;
 
@@ -58,28 +59,34 @@ public class AuthService {
     }
 
     // LOGIN
-    public String login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request) {
 
-        // AUTHENTICATE USER
         authenticationManager.authenticate(
-
                 new UsernamePasswordAuthenticationToken(
-
                         request.getEmail(),
-
                         request.getPassword()
                 )
         );
 
-        // LOAD USER DETAILS
-        UserDetails userDetails =
+        User user = userRepository
+                .findByEmail(request.getEmail())
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
 
+        UserDetails userDetails =
                 customUserDetailsService
                         .loadUserByUsername(
                                 request.getEmail()
                         );
 
-        // GENERATE TOKEN
-        return jwtService.generateToken(userDetails);
+        String token =
+                jwtService.generateToken(userDetails);
+
+        return new AuthResponse(
+                token,
+                user.getEmail(),
+                user.getRole().name()
+        );
     }
+
 }

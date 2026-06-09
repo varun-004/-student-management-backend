@@ -8,6 +8,10 @@ public interface CourseService {
 
     CourseResponse createCourse(CreateCourseRequest request);
 
+    CourseResponse getCourseById(Long id);
+
+
+
 
     CourseResponse updateCourse(
             Long courseId,

@@ -1,10 +1,9 @@
-package com.example.student_management_system.attendance.controller;
+        package com.example.student_management_system.attendance.controller;
 
 import com.example.student_management_system.attendance.dto.AttendanceResponse;
 import com.example.student_management_system.attendance.dto.MarkAttendanceRequest;
-import com.example.student_management_system.attendance.service.AttendanceService;
 
-import jakarta.validation.Valid;
+import com.example.student_management_system.attendance.service.AttendanceService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,45 +12,77 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+
 @RequestMapping("/api/attendance")
+
 @RequiredArgsConstructor
 public class AttendanceController {
 
-    private final AttendanceService attendanceService;
+    private final AttendanceService
+            attendanceService;
 
-    // MARK ATTENDANCE
+    /*
+    |--------------------------------------------------------------------------
+    | MARK ATTENDANCE
+    |--------------------------------------------------------------------------
+    */
 
     @PostMapping
     public AttendanceResponse markAttendance(
-            @Valid @RequestBody MarkAttendanceRequest request
+            @RequestBody
+            MarkAttendanceRequest request
     ) {
 
-        return attendanceService.markAttendance(request);
+        return attendanceService
+                .markAttendance(request);
     }
 
-    // GET STUDENT ATTENDANCE HISTORY
+    /*
+    |--------------------------------------------------------------------------
+    | COURSE ATTENDANCE
+    |--------------------------------------------------------------------------
+    */
+
+    @GetMapping("/course/{courseId}")
+    public List<AttendanceResponse>
+    getAttendanceByCourse(
+            @PathVariable Long courseId
+    ) {
+
+        return attendanceService
+                .getAttendanceByCourse(
+                        courseId
+                );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | STUDENT ATTENDANCE
+    |--------------------------------------------------------------------------
+    */
 
     @GetMapping("/student/{studentId}")
-    public List<AttendanceResponse> getStudentAttendance(
+    public List<AttendanceResponse>
+    getAttendanceByStudent(
             @PathVariable Long studentId
     ) {
 
         return attendanceService
-                .getStudentAttendance(studentId);
+                .getAttendanceByStudent(
+                        studentId
+                );
     }
 
-    // GET ATTENDANCE PERCENTAGE
-
-    @GetMapping("/percentage")
-    public double getAttendancePercentage(
-            @RequestParam Long studentId,
-            @RequestParam Long courseId
+    @GetMapping(
+            "/percentage/{studentId}"
+    )
+    public Double getAttendancePercentage(
+            @PathVariable Long studentId
     ) {
 
         return attendanceService
                 .getAttendancePercentage(
-                        studentId,
-                        courseId
+                        studentId
                 );
     }
 }

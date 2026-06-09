@@ -42,11 +42,9 @@ public class AuthController {
             @RequestBody LoginRequest request
     ) {
 
-        String token =
+        AuthResponse response =
                 authService.login(request);
 
-        return ResponseEntity.ok(
-                new AuthResponse(token)
-        );
+        return ResponseEntity.ok(response);
     }
 }

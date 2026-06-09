@@ -1,6 +1,4 @@
-package com.example.student_management_system.attendance.dto;
-
-import com.example.student_management_system.attendance.entity.AttendanceStatus;
+        package com.example.student_management_system.attendance.dto;
 
 import lombok.Builder;
 import lombok.Data;
@@ -13,10 +11,6 @@ public class AttendanceResponse {
 
     private Long id;
 
-    private LocalDate date;
-
-    private AttendanceStatus status;
-
     private Long studentId;
 
     private String studentName;
@@ -24,4 +18,8 @@ public class AttendanceResponse {
     private Long courseId;
 
     private String courseName;
+
+    private LocalDate attendanceDate;
+
+    private Boolean present;
 }

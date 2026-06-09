@@ -1,39 +1,65 @@
-package com.example.student_management_system.attendance.entity;
+        package com.example.student_management_system.attendance.entity;
 
 import com.example.student_management_system.course.entity.Course;
 import com.example.student_management_system.student.entity.Student;
 
 import jakarta.persistence.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "attendance")
-@Data
+
+@Getter
+@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
+
 @Builder
 public class Attendance {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(
+            strategy = GenerationType.IDENTITY
+    )
     private Long id;
 
-    private LocalDate date;
-
-    @Enumerated(EnumType.STRING)
-    private AttendanceStatus status;
+    /*
+    |--------------------------------------------------------------------------
+    | STUDENT
+    |--------------------------------------------------------------------------
+    */
 
     @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
 
+    /*
+    |--------------------------------------------------------------------------
+    | COURSE
+    |--------------------------------------------------------------------------
+    */
+
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
+
+    /*
+    |--------------------------------------------------------------------------
+    | DATE
+    |--------------------------------------------------------------------------
+    */
+
+    private LocalDate attendanceDate;
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATUS
+    |--------------------------------------------------------------------------
+    */
+
+    private Boolean present;
+
 }

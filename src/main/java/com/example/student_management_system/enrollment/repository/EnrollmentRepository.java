@@ -19,4 +19,7 @@ public interface EnrollmentRepository
         ORDER BY COUNT(e.student.id) DESC
     """)
     List<Object[]> getTopCourses(Pageable pageable);
+
+
+
 }
