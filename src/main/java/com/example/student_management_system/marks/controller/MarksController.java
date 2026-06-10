@@ -2,6 +2,7 @@ package com.example.student_management_system.marks.controller;
 
 import com.example.student_management_system.marks.dto.AddMarksRequest;
 import com.example.student_management_system.marks.dto.MarksResponse;
+import com.example.student_management_system.marks.dto.TopPerformerResponse;
 import com.example.student_management_system.marks.service.MarksService;
 
 import jakarta.validation.Valid;
@@ -58,5 +59,11 @@ public class MarksController {
     ) {
 
         return marksService.calculateGPA(studentId);
+    }
+
+    @GetMapping("/top-performers")
+    public List<TopPerformerResponse> getTopPerformers() {
+
+        return marksService.getTopPerformers();
     }
 }

@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import com.example.student_management_system.marks.dto.TopPerformerResponse;
+
 @Service
 @RequiredArgsConstructor
 public class MarksServiceImpl implements MarksService {
@@ -136,5 +138,40 @@ public class MarksServiceImpl implements MarksService {
                 .courseId(marks.getCourse().getId())
                 .courseName(marks.getCourse().getCourseName())
                 .build();
+    }
+
+
+    @Override
+    public List<TopPerformerResponse> getTopPerformers() {
+
+        List<Student> students =
+                studentRepository.findAll();
+
+        return students.stream()
+
+                .map(student -> {
+
+                    double average =
+                            calculateStudentAverage(
+                                    student.getId()
+                            );
+
+                    return new TopPerformerResponse(
+                            student.getId(),
+                            student.getName(),
+                            average
+                    );
+                })
+
+                .sorted(
+                        (s1, s2) -> Double.compare(
+                                s2.getAverageMarks(),
+                                s1.getAverageMarks()
+                        )
+                )
+
+                .limit(10)
+
+                .toList();
     }
 }

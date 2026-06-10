@@ -2,6 +2,7 @@ package com.example.student_management_system.marks.service;
 
 import com.example.student_management_system.marks.dto.AddMarksRequest;
 import com.example.student_management_system.marks.dto.MarksResponse;
+import com.example.student_management_system.marks.dto.TopPerformerResponse;
 
 import java.util.List;
 
@@ -22,4 +23,6 @@ public interface MarksService {
     double calculateGPA(
             Long studentId
     );
+
+    List<TopPerformerResponse> getTopPerformers();
 }
