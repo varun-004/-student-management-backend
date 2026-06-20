@@ -28,4 +28,12 @@ public interface MarksRepository
 
     // REQUIRED FOR MarksServiceImpl
     List<Marks> findByStudentId(Long studentId);
+
+    List<Marks>
+    findByCourseId(Long courseId);
+
+
+
+
+
 }

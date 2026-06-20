@@ -9,10 +9,14 @@ import com.example.student_management_system.student.dto.Studentdto;
 import com.example.student_management_system.student.entity.Student;
 import com.example.student_management_system.student.repository.StudentRepository;
 
+import com.example.student_management_system.teacher.entity.Teacher;
+import com.example.student_management_system.teacher.repository.TeacherRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.example.student_management_system.enrollment.entity.Enrollment;
@@ -27,6 +31,8 @@ public class CourseServiceImpl implements CourseService {
     private final StudentRepository studentRepository;
 
     private final EnrollmentRepository enrollmentRepository;
+
+    private final TeacherRepository teacherRepository;
 
     /*
     |--------------------------------------------------------------------------
@@ -350,6 +356,56 @@ public class CourseServiceImpl implements CourseService {
 
 
                 .build();
+    }
+
+    @Override
+    public CourseResponse assignTeacherToCourse(
+            Long courseId,
+            Long teacherId) {
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() ->
+                        new RuntimeException("Course not found"));
+
+        Teacher teacher = teacherRepository.findById(teacherId)
+                .orElseThrow(() ->
+                        new RuntimeException("Teacher not found"));
+
+        course.setTeacher(teacher);
+
+        Course savedCourse = courseRepository.save(course);
+
+        return mapToResponse(savedCourse);
+    }
+
+
+    @Override
+    public List<CourseResponse> getCoursesByTeacher(
+            Long teacherId) {
+
+        return courseRepository.findByTeacherId(teacherId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public List<StudentResponse> getStudentsByCourse(Long courseId) {
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() ->
+                        new RuntimeException("Course not found"));
+
+        return course.getStudents()
+                .stream()
+                .map(student ->
+                        StudentResponse.builder()
+                                .id(student.getId())
+                                .name(student.getName())
+                                .email(student.getEmail())
+                                .build()
+                )
+                .toList();
     }
 }
 

@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface AttendanceRepository
+import java.util.List;
+
+        public interface AttendanceRepository
         extends JpaRepository<Attendance, Long> {
 
     @Query("""
@@ -55,4 +57,7 @@ public interface AttendanceRepository
             @Param("studentId")
             Long studentId
     );
+
+    List<Attendance> findByCourseId(Long courseId);
+
 }

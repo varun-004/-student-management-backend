@@ -107,7 +107,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/analytics/**")
                         .hasAnyRole(
                                 "ADMIN",
-                                "STUDENT"
+                                "STUDENT",
+                                "TEACHER"
                         )
                         /*
                         |--------------------------------------------------------------------------

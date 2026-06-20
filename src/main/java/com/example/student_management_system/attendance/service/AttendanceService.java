@@ -2,14 +2,14 @@
 
 import com.example.student_management_system.attendance.dto.AttendanceResponse;
 import com.example.student_management_system.attendance.dto.MarkAttendanceRequest;
+import com.example.student_management_system.attendance.entity.Attendance;
 
 import java.util.List;
 
 public interface AttendanceService {
 
-    AttendanceResponse markAttendance(
-            MarkAttendanceRequest request
-    );
+    public AttendanceResponse markAttendance(
+            MarkAttendanceRequest request);
 
     List<AttendanceResponse>
     getAttendanceByCourse(
@@ -24,5 +24,7 @@ public interface AttendanceService {
     double getAttendancePercentage(
             Long studentId
     );
+
+
 }
 

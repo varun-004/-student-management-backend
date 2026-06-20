@@ -5,6 +5,7 @@ import com.example.student_management_system.course.repository.CourseRepository;
 
 import com.example.student_management_system.marks.dto.AddMarksRequest;
 import com.example.student_management_system.marks.dto.MarksResponse;
+import com.example.student_management_system.marks.dto.UpdateMarksRequest;
 import com.example.student_management_system.marks.entity.Marks;
 import com.example.student_management_system.marks.repository.MarksRepository;
 import com.example.student_management_system.marks.service.MarksService;
@@ -174,4 +175,51 @@ public class MarksServiceImpl implements MarksService {
 
                 .toList();
     }
+
+    @Override
+    public List<MarksResponse> getMarksByCourse(
+            Long courseId
+    ) {
+
+        return marksRepository
+                .findByCourseId(courseId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+
+    @Override
+    public MarksResponse updateMarks(
+            Long marksId,
+            UpdateMarksRequest request
+    ) {
+
+        Marks marks =
+                marksRepository.findById(marksId)
+                        .orElseThrow(
+                                () -> new RuntimeException(
+                                        "Marks not found"
+                                )
+                        );
+
+        marks.setScore(
+                request.getScore()
+        );
+
+        marks.setGrade(
+                calculateGrade(
+                        request.getScore()
+                )
+        );
+
+        marksRepository.save(
+                marks
+        );
+
+        return mapToResponse(
+                marks
+        );
+    }
+
 }

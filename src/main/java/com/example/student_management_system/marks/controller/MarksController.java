@@ -3,6 +3,7 @@ package com.example.student_management_system.marks.controller;
 import com.example.student_management_system.marks.dto.AddMarksRequest;
 import com.example.student_management_system.marks.dto.MarksResponse;
 import com.example.student_management_system.marks.dto.TopPerformerResponse;
+import com.example.student_management_system.marks.dto.UpdateMarksRequest;
 import com.example.student_management_system.marks.service.MarksService;
 
 import jakarta.validation.Valid;
@@ -19,16 +20,6 @@ import java.util.List;
 public class MarksController {
 
     private final MarksService marksService;
-
-    // ADD MARKS
-
-    @PostMapping
-    public MarksResponse addMarks(
-            @Valid @RequestBody AddMarksRequest request
-    ) {
-
-        return marksService.addMarks(request);
-    }
 
     // GET STUDENT MARKS
 
@@ -66,4 +57,39 @@ public class MarksController {
 
         return marksService.getTopPerformers();
     }
+
+    @PostMapping
+    public MarksResponse addMarks(
+            @RequestBody
+            AddMarksRequest request
+    ) {
+
+        return marksService
+                .addMarks(request);
+    }
+
+    @GetMapping("/course/{courseId}")
+    public List<MarksResponse>
+    getMarksByCourse(
+            @PathVariable Long courseId
+    ) {
+
+        return marksService
+                .getMarksByCourse(
+                        courseId
+                );
+    }
+
+    @PutMapping("/{marksId}")
+    public MarksResponse updateMarks(
+            @PathVariable Long marksId,
+            @RequestBody UpdateMarksRequest request
+    ) {
+
+        return marksService.updateMarks(
+                marksId,
+                request
+        );
+    }
+
 }

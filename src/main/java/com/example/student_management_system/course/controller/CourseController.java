@@ -4,6 +4,7 @@ import com.example.student_management_system.course.dto.CreateCourseRequest;
 import com.example.student_management_system.course.dto.CourseResponse;
 import com.example.student_management_system.course.service.CourseService;
 
+import com.example.student_management_system.student.dto.StudentResponse;
 import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/courses")
@@ -87,4 +90,31 @@ public class CourseController {
                 courseId
         );
     }
+
+    @PostMapping("/{courseId}/assign-teacher/{teacherId}")
+    public CourseResponse assignTeacher(
+            @PathVariable Long courseId,
+            @PathVariable Long teacherId) {
+
+        return courseService.assignTeacherToCourse(
+                courseId,
+                teacherId);
+    }
+
+    @GetMapping("/teacher/{teacherId}")
+    public List<CourseResponse> getTeacherCourses(
+            @PathVariable Long teacherId) {
+
+        return courseService.getCoursesByTeacher(
+                teacherId);
+    }
+
+    @GetMapping("/{courseId}/students")
+    public List<StudentResponse> getStudentsByCourse(
+            @PathVariable Long courseId) {
+
+        return courseService.getStudentsByCourse(courseId);
+    }
+
+
 }

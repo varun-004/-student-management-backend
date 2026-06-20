@@ -3,6 +3,7 @@
 
 import com.example.student_management_system.student.entity.Student;
 
+import com.example.student_management_system.teacher.entity.Teacher;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -20,6 +21,8 @@ import java.util.Set;
 @AllArgsConstructor
 
 @Builder
+
+
 public class Course {
 
     @Id
@@ -53,4 +56,9 @@ public class Course {
     @Builder.Default
     private Set<Student> students =
             new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
 }
+
