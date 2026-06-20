@@ -94,5 +94,19 @@ public class StudentService {
     }
 
 
+    public StudentResponseDTO getStudentByEmail(
+            String email
+    ) {
+
+        Student student =
+                repo.findByEmail(email)
+                        .orElseThrow(
+                                () -> new RuntimeException(
+                                        "Student not found"
+                                )
+                        );
+
+        return convertToDTO(student);
+    }
 
 }

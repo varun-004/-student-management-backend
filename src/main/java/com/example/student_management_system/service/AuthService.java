@@ -24,6 +24,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.stereotype.Service;
 
+import com.example.student_management_system.student.entity.Student;
+import com.example.student_management_system.student.repository.StudentRepository;
+
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -38,6 +42,8 @@ public class AuthService {
 
     private final CustomUserDetailsService customUserDetailsService;
 
+    private final StudentRepository studentRepository;
+
     // REGISTER
     public String register(RegisterRequest request) {
 
@@ -48,15 +54,38 @@ public class AuthService {
         user.setEmail(request.getEmail());
 
         user.setPassword(
-                passwordEncoder.encode(request.getPassword())
+                passwordEncoder.encode(
+                        request.getPassword()
+                )
         );
 
-        user.setRole(request.getRole());
+        user.setRole(
+                request.getRole()
+        );
 
-        userRepository.save(user);
+        User savedUser =
+                userRepository.save(user);
+
+        if (request.getRole().name()
+                .equals("STUDENT")) {
+
+            Student student =
+                    Student.builder()
+                            .name(
+                                    request.getName()
+                            )
+                            .email(
+                                    request.getEmail()
+                            )
+                            .build();
+
+            studentRepository.save(student);
+        }
 
         return "User Registered Successfully";
     }
+
+
 
     // LOGIN
     public AuthResponse login(LoginRequest request) {

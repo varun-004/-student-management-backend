@@ -1,6 +1,7 @@
 package com.example.student_management_system.student.controller;
 
 import com.example.student_management_system.ResponseDTO.StudentResponseDTO;
+import com.example.student_management_system.student.dto.StudentResponse;
 import com.example.student_management_system.student.dto.Studentdto;
 import com.example.student_management_system.student.service.StudentService;
 
@@ -84,5 +85,15 @@ public class StudentController {
     public String studentDashboard() {
 
         return "WELCOME STUDENT";
+    }
+
+    @GetMapping("/email/{email}")
+    public StudentResponseDTO
+    getStudentByEmail(
+            @PathVariable String email
+    ) {
+
+        return service
+                .getStudentByEmail(email);
     }
 }

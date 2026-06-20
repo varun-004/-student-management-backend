@@ -17,4 +17,6 @@ public class CreateCourseRequest {
     @Min(value = 1, message = "Credits must be at least 1")
     @Max(value = 10, message = "Credits cannot exceed 10")
     private Integer credits;
+    private Long teacherId;
+
 }

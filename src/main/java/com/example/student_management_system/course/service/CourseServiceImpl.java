@@ -34,6 +34,8 @@ public class CourseServiceImpl implements CourseService {
 
     private final TeacherRepository teacherRepository;
 
+
+
     /*
     |--------------------------------------------------------------------------
     | CREATE COURSE
@@ -44,6 +46,16 @@ public class CourseServiceImpl implements CourseService {
     public CourseResponse createCourse(
             CreateCourseRequest request
     ) {
+
+        Teacher teacher =
+                teacherRepository.findById(
+                                request.getTeacherId()
+                        )
+                        .orElseThrow(
+                                () -> new RuntimeException(
+                                        "Teacher not found"
+                                )
+                        );
 
         Course course = Course.builder()
 
@@ -61,6 +73,10 @@ public class CourseServiceImpl implements CourseService {
 
                 .credits(
                         request.getCredits()
+                )
+
+                .teacher(
+                        teacher
                 )
 
                 .build();
