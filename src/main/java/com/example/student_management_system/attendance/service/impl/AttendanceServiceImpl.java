@@ -64,6 +64,20 @@ public class AttendanceServiceImpl
                                 )
                         );
 
+        attendanceRepository
+                .findByStudent_IdAndCourse_IdAndAttendanceDate(
+                        request.getStudentId(),
+                        request.getCourseId(),
+                        LocalDate.now()
+                )
+                .ifPresent(attendance -> {
+
+                    throw new RuntimeException(
+                            "Attendance already marked for today"
+                    );
+
+                });
+
         Attendance attendance =
                 Attendance.builder()
 

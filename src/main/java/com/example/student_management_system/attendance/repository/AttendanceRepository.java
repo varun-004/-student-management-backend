@@ -8,7 +8,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+
 
         public interface AttendanceRepository
         extends JpaRepository<Attendance, Long> {
@@ -83,5 +87,14 @@ AND a.course.id = :courseId
                     Long studentId,
                     Long courseId
             );
+
+            Optional<Attendance>
+            findByStudent_IdAndCourse_IdAndAttendanceDate(
+                    Long studentId,
+                    Long courseId,
+                    LocalDate attendanceDate
+            );
+
+
 
 }

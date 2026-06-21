@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MarksRepository
         extends JpaRepository<Marks, Long> {
@@ -40,6 +41,13 @@ public interface MarksRepository
     void deleteByStudent_IdAndCourse_Id(
             Long studentId,
             Long courseId
+    );
+
+    Optional<Marks>
+    findByStudent_IdAndCourse_IdAndSubject(
+            Long studentId,
+            Long courseId,
+            String subject
     );
 
 

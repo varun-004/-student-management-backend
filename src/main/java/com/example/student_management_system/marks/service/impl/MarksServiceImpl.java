@@ -36,15 +36,25 @@ public class MarksServiceImpl implements MarksService {
             AddMarksRequest request
     ) {
 
-        Student student = studentRepository.findById(
-                request.getStudentId()
-        ).orElseThrow(() ->
-                new RuntimeException("Student not found"));
+        Student student =
+                studentRepository.findById(
+                                request.getStudentId()
+                        )
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Student not found"
+                                )
+                        );
 
-        Course course = courseRepository.findById(
-                request.getCourseId()
-        ).orElseThrow(() ->
-                new RuntimeException("Course not found"));
+        Course course =
+                courseRepository.findById(
+                                request.getCourseId()
+                        )
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Course not found"
+                                )
+                        );
 
         // VALIDATE ENROLLMENT
 
@@ -55,21 +65,60 @@ public class MarksServiceImpl implements MarksService {
             );
         }
 
-        String grade = calculateGrade(request.getScore());
+        // PREVENT DUPLICATE MARKS
 
-        Marks marks = Marks.builder()
-                .subject(request.getSubject())
-                .score(request.getScore())
-                .grade(grade)
-                .student(student)
-                .course(course)
-                .build();
+        marksRepository
+                .findByStudent_IdAndCourse_IdAndSubject(
+                        request.getStudentId(),
+                        request.getCourseId(),
+                        request.getSubject()
+                )
+                .ifPresent(existing -> {
 
-        marksRepository.save(marks);
+                    throw new RuntimeException(
+                            "Marks already entered for this subject"
+                    );
 
-        return mapToResponse(marks);
+                });
+
+        String grade =
+                calculateGrade(
+                        request.getScore()
+                );
+
+        Marks marks =
+                Marks.builder()
+
+                        .subject(
+                                request.getSubject()
+                        )
+
+                        .score(
+                                request.getScore()
+                        )
+
+                        .grade(
+                                grade
+                        )
+
+                        .student(
+                                student
+                        )
+
+                        .course(
+                                course
+                        )
+
+                        .build();
+
+        marksRepository.save(
+                marks
+        );
+
+        return mapToResponse(
+                marks
+        );
     }
-
     @Override
     public List<MarksResponse> getStudentMarks(
             Long studentId
@@ -196,10 +245,12 @@ public class MarksServiceImpl implements MarksService {
     ) {
 
         Marks marks =
-                marksRepository.findById(marksId)
-                        .orElseThrow(
-                                () -> new RuntimeException(
-                                        "Marks not found"
+                marksRepository.findById(
+                                marksId
+                        )
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Marks record not found"
                                 )
                         );
 

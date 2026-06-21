@@ -62,4 +62,5 @@ public class Attendance {
 
     private Boolean present;
 
+
 }
