@@ -2,7 +2,9 @@
 
 import com.example.student_management_system.attendance.entity.Attendance;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -59,5 +61,27 @@ import java.util.List;
     );
 
     List<Attendance> findByCourseId(Long courseId);
+
+            void deleteByStudentIdAndCourseId(
+                    Long studentId,
+                    Long courseId
+            );
+
+            @Modifying
+            @Transactional
+            @Query("""
+DELETE FROM Attendance a
+WHERE a.student.id = :studentId
+AND a.course.id = :courseId
+""")
+            void deleteAttendanceByStudentAndCourse(
+                    @Param("studentId") Long studentId,
+                    @Param("courseId") Long courseId
+            );
+
+            void deleteByStudent_IdAndCourse_Id(
+                    Long studentId,
+                    Long courseId
+            );
 
 }

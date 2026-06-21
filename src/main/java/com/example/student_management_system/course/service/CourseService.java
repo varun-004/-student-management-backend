@@ -15,9 +15,6 @@ public interface CourseService {
 
     List<StudentResponse> getStudentsByCourse(Long courseId);
 
-
-
-
     CourseResponse updateCourse(
             Long courseId,
             CreateCourseRequest request

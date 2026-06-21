@@ -32,6 +32,16 @@ public interface MarksRepository
     List<Marks>
     findByCourseId(Long courseId);
 
+    void deleteByStudentIdAndCourseId(
+            Long studentId,
+            Long courseId
+    );
+
+    void deleteByStudent_IdAndCourse_Id(
+            Long studentId,
+            Long courseId
+    );
+
 
 
 

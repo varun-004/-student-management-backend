@@ -20,6 +20,11 @@ public interface EnrollmentRepository
     """)
     List<Object[]> getTopCourses(Pageable pageable);
 
+    void deleteByStudentIdAndCourseId(
+            Long studentId,
+            Long courseId
+    );
+
 
 
 }

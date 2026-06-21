@@ -27,5 +27,7 @@ public class CourseResponse {
     */
 
     private List<StudentResponse> students;
+    private Long teacherId;
+    private String teacherName;
 }
 

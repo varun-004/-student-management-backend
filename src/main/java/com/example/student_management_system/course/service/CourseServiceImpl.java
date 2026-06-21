@@ -1,9 +1,11 @@
 package com.example.student_management_system.course.service;
+import com.example.student_management_system.attendance.repository.AttendanceRepository;
 import com.example.student_management_system.course.dto.CreateCourseRequest;
 import com.example.student_management_system.course.dto.CourseResponse;
 import com.example.student_management_system.course.entity.Course;
 import com.example.student_management_system.course.repository.CourseRepository;
 
+import com.example.student_management_system.marks.repository.MarksRepository;
 import com.example.student_management_system.student.dto.StudentResponse;
 import com.example.student_management_system.student.dto.Studentdto;
 import com.example.student_management_system.student.entity.Student;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 
 import com.example.student_management_system.enrollment.entity.Enrollment;
 import com.example.student_management_system.enrollment.repository.EnrollmentRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +36,9 @@ public class CourseServiceImpl implements CourseService {
     private final EnrollmentRepository enrollmentRepository;
 
     private final TeacherRepository teacherRepository;
+
+    private final AttendanceRepository attendanceRepository;
+    private final MarksRepository marksRepository;
 
 
 
@@ -289,7 +295,9 @@ public class CourseServiceImpl implements CourseService {
     |--------------------------------------------------------------------------
     */
 
+
     @Override
+    @Transactional
     public CourseResponse removeStudentFromCourse(
             Long studentId,
             Long courseId
@@ -297,7 +305,6 @@ public class CourseServiceImpl implements CourseService {
 
         Student student = studentRepository
                 .findById(studentId)
-
                 .orElseThrow(() ->
                         new RuntimeException(
                                 "Student not found"
@@ -306,20 +313,31 @@ public class CourseServiceImpl implements CourseService {
 
         Course course = courseRepository
                 .findById(courseId)
-
                 .orElseThrow(() ->
                         new RuntimeException(
                                 "Course not found"
                         )
                 );
 
+        // Delete attendance
+        attendanceRepository.deleteByStudent_IdAndCourse_Id(
+                studentId,
+                courseId
+        );
+
+        // Delete marks
+        marksRepository.deleteByStudent_IdAndCourse_Id(
+                studentId,
+                courseId
+        );
+
+        // Remove enrollment
         student.getCourses().remove(course);
 
         studentRepository.save(student);
 
         return mapToResponse(course);
     }
-
     /*
     |--------------------------------------------------------------------------
     | MAP RESPONSE
@@ -334,42 +352,38 @@ public class CourseServiceImpl implements CourseService {
 
                 .id(course.getId())
 
-                .courseCode(
-                        course.getCourseCode()
+                .courseCode(course.getCourseCode())
+
+                .courseName(course.getCourseName())
+
+                .description(course.getDescription())
+
+                .credits(course.getCredits())
+
+                .teacherId(
+                        course.getTeacher() != null
+                                ? course.getTeacher().getId()
+                                : null
                 )
 
-                .courseName(
-                        course.getCourseName()
-                )
-
-                .description(
-                        course.getDescription()
-                )
-
-                .credits(
-                        course.getCredits()
+                .teacherName(
+                        course.getTeacher() != null
+                                ? course.getTeacher().getFirstName()
+                                : null
                 )
 
                 .students(
                         course.getStudents()
-
                                 .stream()
-
-                                .map(student -> StudentResponse.builder()
-
-                                        .id(student.getId())
-
-                                        .name(student.getName())
-
-                                        .email(student.getEmail())
-
-                                        .build()
-
+                                .map(student ->
+                                        StudentResponse.builder()
+                                                .id(student.getId())
+                                                .name(student.getName())
+                                                .email(student.getEmail())
+                                                .build()
                                 )
-
-                                .collect(Collectors.toList())
+                                .toList()
                 )
-
 
                 .build();
     }
