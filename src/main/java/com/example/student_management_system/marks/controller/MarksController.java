@@ -92,4 +92,12 @@ public class MarksController {
         );
     }
 
+    @DeleteMapping("/{marksId}")
+    public void deleteMarks(
+            @PathVariable Long marksId
+    ) {
+        marksService.deleteMarks(marksId);
+    }
+
+
 }

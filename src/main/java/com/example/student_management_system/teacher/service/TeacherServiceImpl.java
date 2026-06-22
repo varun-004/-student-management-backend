@@ -233,4 +233,29 @@ public class TeacherServiceImpl implements TeacherService {
         );
     }
 
+    @Override
+    public boolean ownsCourse(
+            Long teacherId,
+            Long courseId
+    ) {
+
+        Course course =
+                courseRepository.findById(
+                                courseId
+                        )
+                        .orElseThrow(
+                                () -> new RuntimeException(
+                                        "Course not found"
+                                )
+                        );
+
+        return course.getTeacher() != null
+                &&
+                course.getTeacher()
+                        .getId()
+                        .equals(
+                                teacherId
+                        );
+    }
+
 }

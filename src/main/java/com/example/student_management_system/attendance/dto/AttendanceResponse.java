@@ -22,4 +22,7 @@ public class AttendanceResponse {
     private LocalDate attendanceDate;
 
     private Boolean present;
+
+    private double percentage;
+
 }

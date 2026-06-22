@@ -95,6 +95,16 @@ AND a.course.id = :courseId
                     LocalDate attendanceDate
             );
 
+            @Query("""
+SELECT a
+FROM Attendance a
+WHERE a.course.teacher.id = :teacherId
+""")
+            List<Attendance> findByTeacherId(
+                    @Param("teacherId")
+                    Long teacherId
+            );
+
 
 
 }

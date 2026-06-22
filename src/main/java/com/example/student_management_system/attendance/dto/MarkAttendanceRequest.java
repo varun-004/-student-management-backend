@@ -2,7 +2,9 @@
 
 import lombok.Data;
 
-@Data
+import java.time.LocalDate;
+
+        @Data
 public class MarkAttendanceRequest {
 
     private Long studentId;
@@ -10,4 +12,7 @@ public class MarkAttendanceRequest {
     private Long courseId;
 
     private Boolean present;
+
+    private LocalDate attendanceDate;
+
 }

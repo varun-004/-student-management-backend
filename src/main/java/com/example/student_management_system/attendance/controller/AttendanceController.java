@@ -1,6 +1,7 @@
         package com.example.student_management_system.attendance.controller;
 
 import com.example.student_management_system.attendance.dto.AttendanceResponse;
+import com.example.student_management_system.attendance.dto.CourseAttendanceResponse;
 import com.example.student_management_system.attendance.dto.MarkAttendanceRequest;
 
 import com.example.student_management_system.attendance.entity.Attendance;
@@ -83,6 +84,32 @@ public class AttendanceController {
 
         return attendanceService
                 .getAttendancePercentage(
+                        studentId
+                );
+    }
+
+    @GetMapping("/teacher/{teacherId}")
+    public List<AttendanceResponse>
+    getTeacherAttendance(
+            @PathVariable Long teacherId
+    ) {
+
+        return attendanceService
+                .getAttendanceByTeacher(
+                        teacherId
+                );
+    }
+
+    @GetMapping(
+            "/student/{studentId}/course-wise"
+    )
+    public List<CourseAttendanceResponse>
+    getCourseWiseAttendance(
+            @PathVariable Long studentId
+    ) {
+
+        return attendanceService
+                .getCourseWiseAttendance(
                         studentId
                 );
     }

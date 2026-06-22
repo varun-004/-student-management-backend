@@ -1,6 +1,7 @@
         package com.example.student_management_system.attendance.service.impl;
 
 import com.example.student_management_system.attendance.dto.AttendanceResponse;
+import com.example.student_management_system.attendance.dto.CourseAttendanceResponse;
 import com.example.student_management_system.attendance.dto.MarkAttendanceRequest;
 import com.example.student_management_system.attendance.entity.Attendance;
 import com.example.student_management_system.attendance.repository.AttendanceRepository;
@@ -69,6 +70,7 @@ public class AttendanceServiceImpl
                         request.getStudentId(),
                         request.getCourseId(),
                         LocalDate.now()
+
                 )
                 .ifPresent(attendance -> {
 
@@ -198,7 +200,7 @@ public class AttendanceServiceImpl
                 )
 
                 .attendanceDate(
-                        attendance.getAttendanceDate()
+                        LocalDate.now()
                 )
 
                 .present(
@@ -235,6 +237,95 @@ public class AttendanceServiceImpl
         return (
                 present * 100.0
         ) / total;
+    }
+
+    @Override
+    public List<AttendanceResponse>
+    getAttendanceByTeacher(
+            Long teacherId
+    ) {
+
+        return attendanceRepository
+                .findByTeacherId(
+                        teacherId
+                )
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public List<CourseAttendanceResponse>
+    getCourseWiseAttendance(
+            Long studentId
+    ) {
+
+        Student student =
+                studentRepository
+                        .findById(studentId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Student not found"
+                                )
+                        );
+
+        return student.getCourses()
+
+                .stream()
+
+                .map(course -> {
+
+                    List<Attendance> attendanceList =
+                            attendanceRepository
+                                    .findAll()
+                                    .stream()
+                                    .filter(a ->
+
+                                            a.getStudent()
+                                                    .getId()
+                                                    .equals(studentId)
+
+                                                    &&
+
+                                                    a.getCourse()
+                                                            .getId()
+                                                            .equals(
+                                                                    course.getId()
+                                                            )
+                                    )
+                                    .toList();
+
+                    long total =
+                            attendanceList.size();
+
+                    long present =
+                            attendanceList.stream()
+                                    .filter(
+                                            Attendance::getPresent
+                                    )
+                                    .count();
+
+                    double percentage =
+                            total == 0
+                                    ? 0
+                                    : (present * 100.0)
+                                      / total;
+
+                    return CourseAttendanceResponse
+                            .builder()
+                            .courseId(
+                                    course.getId()
+                            )
+                            .courseName(
+                                    course.getCourseName()
+                            )
+                            .percentage(
+                                    percentage
+                            )
+                            .build();
+                })
+
+                .toList();
     }
 
 

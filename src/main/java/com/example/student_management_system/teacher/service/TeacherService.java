@@ -27,4 +27,9 @@ public interface TeacherService {
             String email
     );
 
+    boolean ownsCourse(
+            Long teacherId,
+            Long courseId
+    );
+
 }

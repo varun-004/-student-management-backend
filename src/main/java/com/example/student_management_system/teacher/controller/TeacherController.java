@@ -75,5 +75,19 @@ public class TeacherController {
                 .getTeacherByEmail(email);
     }
 
+    @GetMapping(
+            "/{teacherId}/course/{courseId}/access"
+    )
+    public boolean checkAccess(
+            @PathVariable Long teacherId,
+            @PathVariable Long courseId
+    ) {
+
+        return teacherService
+                .ownsCourse(
+                        teacherId,
+                        courseId
+                );
+    }
 
 }

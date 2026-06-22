@@ -245,12 +245,11 @@ public class MarksServiceImpl implements MarksService {
     ) {
 
         Marks marks =
-                marksRepository.findById(
-                                marksId
-                        )
-                        .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Marks record not found"
+                marksRepository
+                        .findById(marksId)
+                        .orElseThrow(
+                                () -> new RuntimeException(
+                                        "Marks not found"
                                 )
                         );
 
@@ -269,6 +268,25 @@ public class MarksServiceImpl implements MarksService {
         );
 
         return mapToResponse(
+                marks
+        );
+    }
+
+    @Override
+    public void deleteMarks(
+            Long marksId
+    ) {
+
+        Marks marks =
+                marksRepository
+                        .findById(marksId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Marks not found"
+                                )
+                        );
+
+        marksRepository.delete(
                 marks
         );
     }

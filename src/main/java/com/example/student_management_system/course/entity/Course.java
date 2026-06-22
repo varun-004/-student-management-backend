@@ -1,13 +1,8 @@
-
-        package com.example.student_management_system.course.entity;
-
+package com.example.student_management_system.course.entity;
 import com.example.student_management_system.student.entity.Student;
-
 import com.example.student_management_system.teacher.entity.Teacher;
 import jakarta.persistence.*;
-
 import lombok.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -60,5 +55,6 @@ public class Course {
     @ManyToOne
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
+
 }
 

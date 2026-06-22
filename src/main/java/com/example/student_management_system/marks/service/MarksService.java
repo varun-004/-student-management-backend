@@ -35,6 +35,7 @@ public interface MarksService {
             Long marksId,
             UpdateMarksRequest request
     );
+    void deleteMarks(Long marksId);
 
 
 }
