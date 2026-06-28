@@ -328,6 +328,21 @@ public class AttendanceServiceImpl
                 .toList();
     }
 
+    @Override
+    public List<AttendanceResponse>
+    getAttendanceByDate(
+            LocalDate attendanceDate
+    ) {
+
+        return attendanceRepository
+                .findByAttendanceDate(
+                        attendanceDate
+                )
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
 
 
 }

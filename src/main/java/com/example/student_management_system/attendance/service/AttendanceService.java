@@ -4,10 +4,14 @@ import com.example.student_management_system.attendance.dto.AttendanceResponse;
 import com.example.student_management_system.attendance.dto.CourseAttendanceResponse;
 import com.example.student_management_system.attendance.dto.MarkAttendanceRequest;
 import com.example.student_management_system.attendance.entity.Attendance;
+import com.example.student_management_system.teacher.service.TeacherService;
 
+import java.time.LocalDate;
 import java.util.List;
+import com.example.student_management_system.attendance.service.AttendanceService;
 
 public interface AttendanceService {
+
 
     public AttendanceResponse markAttendance(
             MarkAttendanceRequest request);
@@ -34,6 +38,12 @@ public interface AttendanceService {
     getCourseWiseAttendance(
             Long studentId
     );
+
+    List<AttendanceResponse>
+    getAttendanceByDate(
+            LocalDate attendanceDate
+    );
+
 
 
 }

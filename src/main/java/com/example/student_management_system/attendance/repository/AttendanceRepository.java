@@ -105,6 +105,10 @@ WHERE a.course.teacher.id = :teacherId
                     Long teacherId
             );
 
+            List<Attendance> findByAttendanceDate(
+                    LocalDate attendanceDate
+            );
+
 
 
 }

@@ -1,9 +1,6 @@
 package com.example.student_management_system.teacher.service;
 
-import com.example.student_management_system.teacher.dto.CourseAnalyticsResponse;
-import com.example.student_management_system.teacher.dto.CreateTeacherRequest;
-import com.example.student_management_system.teacher.dto.TeacherResponse;
-import com.example.student_management_system.teacher.dto.UpdateTeacherRequest;
+import com.example.student_management_system.teacher.dto.*;
 
 import java.util.List;
 
@@ -30,6 +27,10 @@ public interface TeacherService {
     boolean ownsCourse(
             Long teacherId,
             Long courseId
+    );
+
+    TeacherDashboardResponse getDashboardStats(
+            Long teacherId
     );
 
 }

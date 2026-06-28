@@ -1,8 +1,6 @@
 package com.example.student_management_system.teacher.service;
 
-import com.example.student_management_system.teacher.dto.CreateTeacherRequest;
-import com.example.student_management_system.teacher.dto.UpdateTeacherRequest;
-import com.example.student_management_system.teacher.dto.TeacherResponse;
+import com.example.student_management_system.teacher.dto.*;
 import com.example.student_management_system.entity.Role;
 import com.example.student_management_system.teacher.entity.Teacher;
 import com.example.student_management_system.entity.User;
@@ -20,8 +18,6 @@ import com.example.student_management_system.course.repository.CourseRepository;
 
 import com.example.student_management_system.marks.entity.Marks;
 import com.example.student_management_system.marks.repository.MarksRepository;
-
-import com.example.student_management_system.teacher.dto.CourseAnalyticsResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -256,6 +252,52 @@ public class TeacherServiceImpl implements TeacherService {
                         .equals(
                                 teacherId
                         );
+    }
+
+    @Override
+    public TeacherDashboardResponse
+    getDashboardStats(
+            Long teacherId
+    ) {
+
+        List<Course> courses =
+                courseRepository.findByTeacherId(
+                        teacherId
+                );
+
+        long totalCourses =
+                courses.size();
+
+        long totalStudents =
+                courses.stream()
+                        .flatMap(course ->
+                                course.getStudents().stream())
+                        .distinct()
+                        .count();
+
+        long totalAttendanceRecords =
+                courses.stream()
+                        .mapToLong(course ->
+                                attendanceRepository
+                                        .findByCourseId(course.getId())
+                                        .size())
+                        .sum();
+
+        long totalMarksRecords =
+                courses.stream()
+                        .mapToLong(course ->
+                                marksRepository
+                                        .findByCourseId(course.getId())
+                                        .size())
+                        .sum();
+
+        return TeacherDashboardResponse
+                .builder()
+                .totalCourses(totalCourses)
+                .totalStudents(totalStudents)
+                .totalAttendanceRecords(totalAttendanceRecords)
+                .totalMarksRecords(totalMarksRecords)
+                .build();
     }
 
 }

@@ -7,21 +7,36 @@ import com.example.student_management_system.attendance.dto.MarkAttendanceReques
 import com.example.student_management_system.attendance.entity.Attendance;
 import com.example.student_management_system.attendance.service.AttendanceService;
 
+import com.example.student_management_system.attendance.util.AttendanceCsvExporter;
+import com.example.student_management_system.teacher.service.TeacherService;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
 
 @RequestMapping("/api/attendance")
 
-@RequiredArgsConstructor
 public class AttendanceController {
 
-    private final AttendanceService
-            attendanceService;
+    private final TeacherService teacherService;
+
+    private final AttendanceService attendanceService;
+
+
+    public AttendanceController(
+            TeacherService teacherService,
+            AttendanceService attendanceService
+    ) {
+        this.teacherService = teacherService;
+        this.attendanceService = attendanceService;
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -113,6 +128,49 @@ public class AttendanceController {
                         studentId
                 );
     }
+
+    @GetMapping("/date/{attendanceDate}")
+    public List<AttendanceResponse>
+    getAttendanceByDate(
+            @PathVariable LocalDate attendanceDate
+    ) {
+
+        return attendanceService
+                .getAttendanceByDate(
+                        attendanceDate
+                );
+    }
+
+    @GetMapping("/course/{courseId}/export")
+    public ResponseEntity<String> exportAttendanceCsv(
+            @PathVariable Long courseId
+    ) {
+
+        List<AttendanceResponse> attendance =
+                attendanceService.getAttendanceByCourse(
+                        courseId
+                );
+
+        String csv =
+                AttendanceCsvExporter.export(
+                        attendance
+                );
+
+        return ResponseEntity.ok()
+
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=attendance.csv"
+                )
+
+                .contentType(
+                        MediaType.TEXT_PLAIN
+                )
+
+                .body(csv);
+    }
+
+
 
 
 }
